@@ -166,7 +166,7 @@ int judge(int roomId) {
   if (table[0] == table[4] && table[4] == table[8]) return table[0];
   if (table[2] == table[4] && table[4] == table[6]) return table[2];
 
-  if (gameRoom[roomId].step == 7) return 3;
+  if (gameRoom[roomId].step == 8) return 3;
 
   return 0;
 }
