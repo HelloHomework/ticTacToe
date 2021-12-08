@@ -212,9 +212,9 @@ int auth(const char *username, const char *password) {
   char buf[BUF_SIZE];
   fp = fopen(PASSWD_LOCATION, "r");
 
-  for(int i = 0; i!=CLIENT_MAX; ++i){
-    if(onlineClient[i].fd != 0){
-      if(strcmp(username,onlineClient[i].username) == 0) return -1;
+  for (int i = 0; i != CLIENT_MAX; ++i) {
+    if (onlineClient[i].fd != 0) {
+      if (strcmp(username, onlineClient[i].username) == 0) return -1;
     }
   }
 
@@ -276,7 +276,8 @@ void accept_request(void *arg) {
   showWelcome(client);
 
   while (1) {
-    recv(client, buf, BUF_SIZE, 0);
+    int res = recv(client, buf, BUF_SIZE, 0);
+    if (res <= 0) pthread_exit((void *)0);
     char *method = strtok(buf, SPLIT_WORD);
 
     if (method == NULL) {
@@ -316,8 +317,7 @@ void accept_request(void *arg) {
           continue;
         }
         if (status == -1) {
-          send(client, "Duplcate login\n",
-               strlen("Duplcate login\n"), 0);
+          send(client, "Duplcate login\n", strlen("Duplcate login\n"), 0);
           printf("[AAA] : '%s' login failed(Duplcate)\n", arg1);
           status = 0;
           continue;
