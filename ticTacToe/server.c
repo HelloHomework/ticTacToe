@@ -212,6 +212,12 @@ int auth(const char *username, const char *password) {
   char buf[BUF_SIZE];
   fp = fopen(PASSWD_LOCATION, "r");
 
+  for(int i = 0; i!=CLIENT_MAX; ++i){
+    if(onlineClient[i].fd != 0){
+      if(strcmp(username,onlineClient[i].username) == 0) return -1;
+    }
+  }
+
   while (fscanf(fp, "%s", buf) != EOF) {
     char *user = strtok(buf, SPLIT_WORD);
     char *pass = strtok(NULL, SPLIT_WORD);
@@ -307,6 +313,13 @@ void accept_request(void *arg) {
           send(client, "Please Check your username and account\n",
                strlen("Please Check your username and account\n"), 0);
           printf("[AAA] : '%s' login failed\n", arg1);
+          continue;
+        }
+        if (status == -1) {
+          send(client, "Duplcate login\n",
+               strlen("Duplcate login\n"), 0);
+          printf("[AAA] : '%s' login failed(Duplcate)\n", arg1);
+          status = 0;
           continue;
         }
         send(client, "Login Successful\n", strlen("Login Successful\n"), 0);
